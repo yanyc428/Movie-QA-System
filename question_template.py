@@ -8,7 +8,7 @@ from py2neo import Graph
 class Query():
     def __init__(self):
         # 这里暂时使用的是我的服务器数据库，你也可以搭建自己的本地数据库
-        self.graph = Graph("http://localhost:7474", username="neo4j", password="12345678")
+        self.graph = Graph("http://localhost:7474", username="neo4j", password="233024")
 
     # 运行cql语句
     def run(self, cql):
@@ -32,7 +32,8 @@ class QuestionTemplate():
             10: self.get_actor_movie_type,
             11: self.get_cooperation_movie_list,
             12: self.get_actor_movie_num,
-            13: self.get_actor_birthday
+            13: self.get_actor_birthday,
+            14: self.get_actor_birthplace
         }
 
         # 连接数据库
@@ -293,4 +294,14 @@ class QuestionTemplate():
         answer = self.graph.run(cql)
         # print(list(answer)[0][0])
         final_answer = actor_name + "的生日是" + list(answer)[0][0] + "。"
+        return final_answer
+
+    # 14: nnt 出生地
+    def get_actor_birthplace(self):
+        actor_name = self.get_name('nr')
+        cql = f"match(n:Person)-[]->() where n.name='{actor_name}' return n.birthplace"
+        print(cql)
+        answer = self.graph.run(cql)
+        # print(list(answer)[0][0])
+        final_answer = actor_name + "的出生地是" + list(answer)[0][0] + "。"
         return final_answer

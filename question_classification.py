@@ -16,7 +16,7 @@ def read_train_data():
     with(open("./questions/label.txt", "r", encoding="utf-8")) as fr:
         lines = fr.readlines()
         for one_line in lines:
-            temp = one_line.split('    ')
+            temp = one_line.split('	')
             # print(temp)
             word_list = list(jieba.cut(str(temp[1]).strip()))
             # 将这一行加入结果集
@@ -69,7 +69,7 @@ class LRClassifier(object):
     def train_model_lr(self):
         x_train, y_train = self.train_x, self.train_y
         train_data = self.tv.fit_transform(x_train).toarray()
-        clf = LogisticRegression(solver='liblinear', max_iter=5000, multi_class='auto')
+        clf = LogisticRegression(solver='liblinear', max_iter=5000, multi_class='ovr')
         clf.fit(train_data, y_train)
         return clf
 
@@ -113,4 +113,4 @@ class LRClassifier(object):
 
 if __name__ == '__main__':
     qc = LRClassifier()
-    qc.predict("章子怡是谁")
+    qc.predict("章子怡出生在哪里")
