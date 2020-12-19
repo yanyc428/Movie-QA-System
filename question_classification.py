@@ -9,23 +9,22 @@ from nodes import GraphNodes
 from functools import partial
 
 
-def read_train_data():
-    train_x = []
-    train_y = []
-    # 读取文件内容
-    with(open("./questions/label.txt", "r", encoding="utf-8")) as fr:
-        lines = fr.readlines()
-        for one_line in lines:
-            temp = one_line.split('	')
-            # print(temp)
-            word_list = list(jieba.cut(str(temp[1]).strip()))
-            # 将这一行加入结果集
-            train_x.append(" ".join(word_list))
-            train_y.append(temp[0])
-    return train_x, train_y
-
-
 class LRClassifier(object):
+
+    def read_train_data():
+        train_x = []
+        train_y = []
+        # 读取文件内容
+        with(open("./questions/label.txt", "r", encoding="utf-8")) as fr:
+            lines = fr.readlines()
+            for one_line in lines:
+                temp = one_line.split('	')
+                # print(temp)
+                word_list = list(jieba.cut(str(temp[1]).strip()))
+                # 将这一行加入结果集
+                train_x.append(" ".join(word_list))
+                train_y.append(temp[0])
+        return train_x, train_y
 
     def __init__(self):
         # 读取训练数据
