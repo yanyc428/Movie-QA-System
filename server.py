@@ -21,7 +21,7 @@ que = Question()
 
 
 @cross_origin
-@app.route('/search')
+@app.route('/neo4j/search')
 def search():
     text = request.args.get('q')
     answer = que.question_process(text)
