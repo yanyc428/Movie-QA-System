@@ -14,20 +14,6 @@ import jieba.posseg
 from question_classification import  LRClassifier
 from question_template import QuestionTemplate
 
-
-# Disable
-def blockPrint():
-    sys.stdout = open(os.devnull, 'w')
-
-
-# Restore
-def enablePrint():
-    sys.stdout = sys.__stdout__
-
-
-# blockPrint()
-# enablePrint()
-
 class Question():
     def __init__(self):
         # 初始化相关设置：读取词汇表，训练分类器，连接数据库
