@@ -1,12 +1,16 @@
 # 基于知识图谱的电影问答系统
 
+
+#### 致谢
+https://github.com/xiaoliang8006/Movie-QA-System
+
 #### 相关源代码GitHub上也有：
 
-[https://github.com/xiaoliang8006/Movie-QA-System](https://github.com/xiaoliang8006/Movie-QA-System)
+[https://github.com/Bonsior-yyc/Movie-QA-System](https://github.com/Bonsior-yyc/Movie-QA-System)
 
 #### 体验地址：
 
-[http://104.224.145.185:5000](http://104.224.145.185:5000)
+[https://yanyuchen.com.cn/#/retrieval/neo4j](https://yanyuchen.com.cn/#/retrieval/neo4j)
 
 此项目旨在构建一个关于电影的知识图谱问答系统。目前知识库本身的内容并不全面，但是麻雀虽小，五脏俱全，该项目对多种类型的问题形式都能得到正确的相应结果。以“李连杰”为例，本系统能够回答晴李连杰的个人简介，参演过的电影，参演过的电影类型，参演某一类型的电影都有什么。还能查询某个电影的信息，如上映时间，评分，类型，演员列表等等....
 
@@ -34,9 +38,9 @@
 
 ## 搭建环境
 
-#### python3.6 + jdk1.8 + neo4j-3.4.13
+#### python3.8 + jdk11 + neo4j
 
-注意： neo4j-3.4.13要求java版本必须在jdk8以上
+注意： neo4j要求java版本必须在jdk11以上
 
 网页显示采用flask-0.12.2框架， 和neo4j数据库连接时用的是py2neo-3.0, 之前用py2neo-4.0总是容易出错。
 
@@ -50,7 +54,6 @@
 
     python server.py
 
-最后打开浏览器进入`http://127.0.0.1:5000`即可进行问答。
 
 目前本系统可以回答类似如下类型的问题(以李连杰和警察故事为例)：
 

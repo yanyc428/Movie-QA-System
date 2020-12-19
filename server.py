@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
-from flask import Flask, request
+from flask import Flask, request, Response
 import sys
 from process_question import Question
 from flask_cors import cross_origin
@@ -34,7 +34,7 @@ def search():
         "answer": answer}
     res = json.dumps(res_dict, ensure_ascii=False)
     print(res)
-    return res
+    return Response(res)
 
 
 if __name__ == '__main__':
