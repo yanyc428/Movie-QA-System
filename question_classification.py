@@ -29,7 +29,7 @@ class LRClassifier(object):
 
     def __init__(self):
         # 读取训练数据
-        read_train_data()
+        self.read_train_data()
         # 训练模型
         self.tv = TfidfVectorizer()
         self.model = self.train_model_lr()
