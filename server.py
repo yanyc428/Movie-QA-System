@@ -6,15 +6,15 @@ from process_question import Question
 from flask_cors import cross_origin
 
 
-def after_request(response):
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Methods'] = 'PUT,GET,POST,DELETE'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization'
-    return response
+# def after_request(response):
+#     response.headers['Access-Control-Allow-Origin'] = '*'
+#     response.headers['Access-Control-Allow-Methods'] = 'PUT,GET,POST,DELETE'
+#     response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization'
+#     return response
 
 
-app = Flask(__name__, static_url_path="")
-app.after_request(after_request)
+app = Flask(__name__)
+# app.after_request(after_request)
 
 # 创建问题处理对象，这样模型就可以常驻内存
 que = Question()
