@@ -24,11 +24,12 @@ class LRClassifier(object):
                 # 将这一行加入结果集
                 train_x.append(" ".join(word_list))
                 train_y.append(temp[0])
-        return train_x, train_y
+
+        self.train_x, self.train_y = train_x, train_y
 
     def __init__(self):
         # 读取训练数据
-        self.train_x, self.train_y = read_train_data()
+        read_train_data()
         # 训练模型
         self.tv = TfidfVectorizer()
         self.model = self.train_model_lr()
