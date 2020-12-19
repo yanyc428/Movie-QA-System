@@ -14,7 +14,7 @@ import jieba.posseg
 from question_classification import  LRClassifier
 from question_template import QuestionTemplate
 
-class Question():
+class Question:
     def __init__(self):
         # 初始化相关设置：读取词汇表，训练分类器，连接数据库
         # 训练分类器
@@ -22,6 +22,7 @@ class Question():
         # 读取问题模板
         with(open("./questions/question_classification.txt", "r", encoding="utf-8")) as f:
             question_mode_list = f.readlines()
+        print("read")
         self.question_mode_dict = {}
         for one_mode in question_mode_list:
             # 读取一行
@@ -30,6 +31,7 @@ class Question():
             self.question_mode_dict[int(mode_id)] = str(mode_str).strip()
         # 创建问题模板对象
         self.questiontemplate = QuestionTemplate()
+        print("init")
 
     def question_process(self, question):
         # 接收问题
