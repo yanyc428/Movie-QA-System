@@ -11,7 +11,7 @@ from functools import partial
 
 class LRClassifier(object):
 
-    def read_train_data():
+    def read_train_data(self):
         train_x = []
         train_y = []
         # 读取文件内容
