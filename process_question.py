@@ -11,7 +11,7 @@ import sys
 
 import jieba.posseg
 
-from question_classification import Question_classify, LRClassifier
+from question_classification import  LRClassifier
 from question_template import QuestionTemplate
 
 
@@ -47,50 +47,20 @@ class Question():
 
     def question_process(self, question):
         # 接收问题
-        self.raw_question = str(question).strip()
-        # 对问题进行词性标注
-        self.pos_quesiton = self.question_posseg()
+        self.raw_question, self.pos_question = self.classify_model.transform_question(question)
         # 得到问题的模板
         self.question_template_id_str = self.get_question_template()
         # 查询图数据库,得到答案
         self.answer = self.query_template()
-        return (self.answer)
+        return self.answer
 
-    def question_posseg(self):
-        jieba.load_userdict("./questions/userdict3.txt")
-        clean_question = re.sub("[\s+\.\!\/_,$%^*(+\"\')]+|[+——()?【】“”！，。？、~@#￥%……&*（）]+", "", self.raw_question)
-        self.clean_question = clean_question
-        question_seged = jieba.posseg.cut(str(clean_question))
-        result = []
-        question_word, question_flag = [], []
-        for w in question_seged:
-            temp_word = f"{w.word}/{w.flag}"
-            result.append(temp_word)
-            # 预处理问题
-            word, flag = w.word, w.flag
-            question_word.append(str(word).strip())
-            question_flag.append(str(flag).strip())
-        assert len(question_flag) == len(question_word)
-        self.question_word = question_word
-        self.question_flag = question_flag
-        print(result)
-        return result
 
     def get_question_template(self):
-        # 抽象问题
-        for item in ['nr', 'nm', 'ng']:
-            while (item in self.question_flag):
-                ix = self.question_flag.index(item)
-                self.question_word[ix] = item
-                self.question_flag[ix] = item + "ed"
-        # 将问题转化字符串
-        str_question = "".join(self.question_word)
-        print("抽象问题为：", str_question)
-        # 通过分类器获取问题模板编号
+        # # 通过分类器获取问题模板编号
         question_template_num = self.classify_model.predict(self.raw_question)
-        print("使用模板编号：", question_template_num)
+        # print("使用模板编号：", question_template_num)
         question_template = self.question_mode_dict[question_template_num]
-        print("问题模板：", question_template)
+        # print("问题模板：", question_template)
         question_template_id_str = str(question_template_num) + "\t" + question_template
         return question_template_id_str
 
@@ -98,9 +68,10 @@ class Question():
     def query_template(self):
         # 调用问题模板类中的获取答案的方法
         try:
-            answer = self.questiontemplate.get_question_answer(self.pos_quesiton, self.question_template_id_str)
+            answer = self.questiontemplate.get_question_answer(self.raw_question, self.pos_question, self.question_template_id_str)
             if answer == '':
                 answer = "数据库作者太懒啦，这里什么都没有！！！"
-        except:
+        except Exception as e :
+            print(e)
             answer = "我也不知道啊！"
         return answer

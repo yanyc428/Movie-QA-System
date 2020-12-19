@@ -27,10 +27,10 @@ def enablePrint():
 enablePrint()
 
 
-@app.route('/')
-def index():
-    return app.send_static_file('index.html')
-
+# @app.route('/')
+# def index():
+#     return app.send_static_file('index.html')
+#
 
 # http://127.0.0.1:5000/search?q=你好
 
@@ -38,10 +38,18 @@ def index():
 def search():
     text = request.args.get('q')
     answer = que.question_process(text)
-    res = json.dumps({"answer": answer})
+    print(que.raw_question)
+    res_dict = {
+        "raw_question": que.raw_question,
+        "pos_question": que.pos_question,
+        "template": que.question_template_id_str,
+        "cql": que.questiontemplate.cql,
+        "answer": answer}
+    res = json.dumps(res_dict, ensure_ascii=False)
+    print(res)
     return res
 
 
 if __name__ == '__main__':
     # 部署到服务器时host要改成'0.0.0.0'
-    app.run(debug=False, host='127.0.0.1', port=5000)
+    app.run(debug=False, host='127.0.0.1', port=5001)

@@ -8,7 +8,7 @@ from py2neo import Graph
 class Query():
     def __init__(self):
         # 这里暂时使用的是我的服务器数据库，你也可以搭建自己的本地数据库
-        self.graph = Graph("http://localhost:7474", username="neo4j", password="233024")
+        self.graph = Graph("http://localhost:7474", username="neo4j", password="12345678")
 
     # 运行cql语句
     def run(self, cql):
@@ -39,24 +39,24 @@ class QuestionTemplate():
         # 连接数据库
         self.graph = Query()
 
-    def get_question_answer(self, question, template):
+    def get_question_answer(self, raw_question, pos_question, template):
         # 如果问题模板的格式不正确则结束
         assert len(str(template).strip().split("\t")) == 2
+        # 获取模板id 和模板字符串
         template_id, template_str = int(str(template).strip().split("\t")[0]), str(template).strip().split("\t")[1]
+
         self.template_id = template_id
         self.template_str2list = str(template_str).split()
 
         # 预处理问题
-        question_word, question_flag = [], []
-        for one in question:
-            word, flag = one.split("/")
-            question_word.append(str(word).strip())
-            question_flag.append(str(flag).strip())
-        assert len(question_flag) == len(question_word)
-        self.question_word = question_word
-        self.question_flag = question_flag
-        self.raw_question = question
+        self.question_word = raw_question.split(' ')
+        self.question_flag = pos_question.split(' ')
+
+        # 检查长度
+        assert len(self.question_word) == len(self.question_flag)
+
         # 根据问题模板来做对应的处理，获取答案
+        print(template_id)
         answer = self.q_template_dict[template_id]()
         return answer
 
@@ -84,15 +84,15 @@ class QuestionTemplate():
             return result_list
 
     def get_num_x(self):
-        x = re.sub(r'\D', "", "".join(self.question_word))
-        return x
+        x_index = self.question_flag.index('x')
+        return self.question_word[x_index]
 
     # 0:nm 评分
     def get_movie_rating(self):
         # 获取电影名称，这个是在原问题中抽取的
         movie_name = self.get_movie_name()
         cql = f"match (m:Movie)-[]->() where m.title='{movie_name}' return m.rating"
-        print(cql)
+        self.cql = cql
         answer = self.graph.run(cql)
         answer = round(list(answer)[0][0], 2)
         final_answer = movie_name + "电影评分为" + str(answer) + "分！"
@@ -102,7 +102,7 @@ class QuestionTemplate():
     def get_movie_releasedate(self):
         movie_name = self.get_movie_name()
         cql = f"match(m:Movie)-[]->() where m.title='{movie_name}' return m.releasedate"
-        print(cql)
+        self.cql = cql
         answer = self.graph.run(cql)
         answer = list(answer)[0][0]
         final_answer = movie_name + "的上映时间是" + str(answer) + "！"
@@ -112,7 +112,7 @@ class QuestionTemplate():
     def get_movie_type(self):
         movie_name = self.get_movie_name()
         cql = f"match(m:Movie)-[r:is]->(b) where m.title='{movie_name}' return b.name"
-        print(cql)
+        self.cql = cql
         answer = self.graph.run(cql)
         answer_list = list(answer)
         answers = []
@@ -126,8 +126,10 @@ class QuestionTemplate():
     def get_movie_introduction(self):
         movie_name = self.get_movie_name()
         cql = f"match(m:Movie)-[]->() where m.title='{movie_name}' return m.introduction"
-        print(cql)
+        self.cql = cql
         answer = self.graph.run(cql)
+        if str(list(answer)[0][0]) == '':
+            return ''
         final_answer = movie_name + "主要讲述了" + str(list(answer)[0][0]) + "！"
         return final_answer
 
@@ -135,7 +137,7 @@ class QuestionTemplate():
     def get_movie_actor_list(self):
         movie_name = self.get_movie_name()
         cql = f"match(n:Person)-[r:actedin]->(m:Movie) where m.title='{movie_name}' return n.name"
-        print(cql)
+        self.cql = cql
         answer = self.graph.run(cql)
         answer_list = list(answer)
         answers = []
@@ -147,20 +149,20 @@ class QuestionTemplate():
 
     # 5:nnt 介绍
     def get_actor_info(self):
-        actor_name = self.get_name('nr')
+        actor_name = self.get_name('nnt')
         cql = f"match(n:Person)-[]->() where n.name='{actor_name}' return n.biography"
-        print(cql)
+        self.cql = cql
         answer = self.graph.run(cql)
         final_answer = list(answer)[0][0]
         return final_answer
 
     # 6:nnt ng 电影作品
     def get_actor_act_type_movie(self):
-        actor_name = self.get_name("nr")
+        actor_name = self.get_name("nnt")
         type = self.get_name("ng")
         # 查询电影名称
         cql = f"match(n:Person)-[]->(m:Movie) where n.name='{actor_name}' return m.title"
-        print(cql)
+        self.cql = cql
         movie_name_list = list(self.graph.run(cql))
         # print(movie_name_list)
         # 查询类型
@@ -188,7 +190,7 @@ class QuestionTemplate():
 
     # 7:nnt 电影作品
     def get_actor_act_movie_list(self):
-        actor_name = self.get_name("nr")
+        actor_name = self.get_name("nnt")
         answers = self.get_actorname_movie_list(actor_name)
         answer_list = "、".join(answers)
         final_answer = actor_name + "演过" + answer_list + "等电影！"
@@ -197,7 +199,7 @@ class QuestionTemplate():
     def get_actorname_movie_list(self, actorname):
         # 查询电影名称
         cql = f"match(n:Person)-[]->(m:Movie) where n.name='{actorname}' return m.title"
-        print(cql)
+        self.cql = cql
         answer = self.graph.run(cql)
         answer_list = list(answer)
         answers = []
@@ -207,10 +209,10 @@ class QuestionTemplate():
 
     # 8:nnt 参演评分 大于 x
     def get_movie_rating_bigger(self):
-        actor_name = self.get_name('nr')
+        actor_name = self.get_name('nnt')
         x = self.get_num_x()
         cql = f"match(n:Person)-[r:actedin]->(m:Movie) where n.name='{actor_name}' and m.rating>={x} return m.title"
-        print(cql)
+        self.cql = cql
         answer = self.graph.run(cql)
         answer_list = list(answer)
         answers = []
@@ -222,10 +224,10 @@ class QuestionTemplate():
 
     # 9:nnt 参演评分 小于 x
     def get_movie_rating_smaller(self):
-        actor_name = self.get_name('nr')
+        actor_name = self.get_name('nnt')
         x = self.get_num_x()
         cql = f"match(n:Person)-[r:actedin]->(m:Movie) where n.name='{actor_name}' and m.rating<{x} return m.title"
-        print(cql)
+        self.cql = cql
         answer = self.graph.run(cql)
         answer_list = list(answer)
         answers = []
@@ -237,10 +239,10 @@ class QuestionTemplate():
 
     # 10:nnt 出演过哪些类型的电影
     def get_actor_movie_type(self):
-        actor_name = self.get_name("nr")
+        actor_name = self.get_name("nnt")
         # 查询电影名称
         cql = f"match(n:Person)-[]->(m:Movie) where n.name='{actor_name}' return m.title"
-        print(cql)
+        self.cql = cql
         movie_name_list = list(self.graph.run(cql))
         # 查询类型
         # print(movie_name_list)
@@ -266,7 +268,7 @@ class QuestionTemplate():
     # 11: 演员A和演员B合作了哪些电影
     def get_cooperation_movie_list(self):
         # 获取演员名字
-        actor_name_list = self.get_name('nr')
+        actor_name_list = self.get_name('nnt')
         movie_list = {}
         for i, actor_name in enumerate(actor_name_list):
             answer_list = self.get_actorname_movie_list(actor_name)
@@ -279,18 +281,18 @@ class QuestionTemplate():
 
     # 12: nnt 一共演过多少部电影
     def get_actor_movie_num(self):
-        actor_name = self.get_name("nr")
-        answer_list = self.get_actorname_movie_list(actor_name)
-        movie_num = len(set(answer_list))
+        actor_name = self.get_name("nnt")
+        answers = self.get_actorname_movie_list(actor_name)
+        movie_num = len(set(answers))
         answer = movie_num
         final_answer = actor_name + "演过" + str(answer) + "部电影!"
         return final_answer
 
     # 13: nnt 出生日期
     def get_actor_birthday(self):
-        actor_name = self.get_name('nr')
+        actor_name = self.get_name('nnt')
         cql = f"match(n:Person)-[]->() where n.name='{actor_name}' return n.birth"
-        print(cql)
+        self.cql = cql
         answer = self.graph.run(cql)
         # print(list(answer)[0][0])
         final_answer = actor_name + "的生日是" + list(answer)[0][0] + "。"
@@ -298,9 +300,9 @@ class QuestionTemplate():
 
     # 14: nnt 出生地
     def get_actor_birthplace(self):
-        actor_name = self.get_name('nr')
+        actor_name = self.get_name('nnt')
         cql = f"match(n:Person)-[]->() where n.name='{actor_name}' return n.birthplace"
-        print(cql)
+        self.cql = cql
         answer = self.graph.run(cql)
         # print(list(answer)[0][0])
         final_answer = actor_name + "的出生地是" + list(answer)[0][0] + "。"
