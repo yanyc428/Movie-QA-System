@@ -20,6 +20,7 @@ class Question:
         # 训练分类器
         self.classify_model = LRClassifier()
         # 读取问题模板
+        print("classifier")
         with(open("./questions/question_classification.txt", "r", encoding="utf-8")) as f:
             question_mode_list = f.readlines()
         print("read")
