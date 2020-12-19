@@ -3,6 +3,7 @@ import json
 from flask import Flask, request
 import sys
 from process_question import Question
+from flask_cors import cross_origin
 
 
 def after_request(response):
@@ -18,6 +19,8 @@ app.after_request(after_request)
 # 创建问题处理对象，这样模型就可以常驻内存
 que = Question()
 
+
+@cross_origin
 @app.route('/search')
 def search():
     text = request.args.get('q')
