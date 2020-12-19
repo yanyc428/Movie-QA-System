@@ -18,22 +18,6 @@ app.after_request(after_request)
 # 创建问题处理对象，这样模型就可以常驻内存
 que = Question()
 
-
-# Restore
-def enablePrint():
-    sys.stdout = sys.__stdout__
-
-
-enablePrint()
-
-
-# @app.route('/')
-# def index():
-#     return app.send_static_file('index.html')
-#
-
-# http://127.0.0.1:5000/search?q=你好
-
 @app.route('/search')
 def search():
     text = request.args.get('q')
