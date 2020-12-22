@@ -56,7 +56,7 @@ class QuestionTemplate():
         assert len(self.question_word) == len(self.question_flag)
 
         # 根据问题模板来做对应的处理，获取答案
-        print(template_id)
+        self.cql = '无法生成cypher语句'
         answer = self.q_template_dict[template_id]()
         return answer
 
