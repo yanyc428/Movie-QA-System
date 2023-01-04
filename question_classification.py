@@ -38,6 +38,13 @@ class LRClassifier(object):
         self._movies = self._nodes.get_movies()
         self._type = self._nodes.get_type()
 
+        for word in self._actors:
+            jieba.add_word(word)
+        for word in self._movies:
+            jieba.add_word(word)
+        for word in self._type:
+            jieba.add_word(word)
+
     def train_model_lr(self):
         x_train, y_train = self.train_x, self.train_y
         train_data = self.tv.fit_transform(x_train).toarray()
