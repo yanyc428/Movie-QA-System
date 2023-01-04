@@ -8,7 +8,7 @@ from py2neo import Graph
 class Query():
     def __init__(self):
         # 这里暂时使用的是我的服务器数据库，你也可以搭建自己的本地数据库
-        self.graph = Graph("http://localhost:7474", username="neo4j", password="12345678")
+        self.graph = Graph("bolt://localhost:7687", auth=("neo4j", "neo4j123456"))
 
     # 运行cql语句
     def run(self, cql):

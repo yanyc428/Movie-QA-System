@@ -3,7 +3,7 @@ from neo4j import GraphDatabase, basic_auth
 
 class open_driver(object):
     def __init__(self):
-        self._driver = GraphDatabase.driver("bolt://localhost:7687", auth=basic_auth("neo4j", "12345678"))
+        self._driver = GraphDatabase.driver("bolt://localhost:7687", auth=basic_auth("neo4j", "neo4j123456"))
 
     def __enter__(self):
         return self._driver

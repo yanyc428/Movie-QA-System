@@ -8,7 +8,7 @@ import文件夹是neo4j默认的数据导入文件夹
 
 from py2neo import Graph
 
-graph = Graph("http://localhost:7474", username="neo4j", password="12345678")
+graph = Graph("bolt://localhost:7687", auth=("neo4j", "neo4j123456"))
 
 """
 #测试
