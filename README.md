@@ -10,7 +10,7 @@ https://github.com/xiaoliang8006/Movie-QA-System
 
 #### 体验地址：
 
-[https://yanyc.cn/#/retrieval/neo4j](https://yanyuchen.com.cn/#/retrieval/neo4j)
+[https://yanyc.cn/#/retrieval/neo4j](https://yanyc.cn/#/retrieval/neo4j)
 
 此项目旨在构建一个关于电影的知识图谱问答系统。目前知识库本身的内容并不全面，但是麻雀虽小，五脏俱全，该项目对多种类型的问题形式都能得到正确的相应结果。以“李连杰”为例，本系统能够回答晴李连杰的个人简介，参演过的电影，参演过的电影类型，参演某一类型的电影都有什么。还能查询某个电影的信息，如上映时间，评分，类型，演员列表等等....
 
